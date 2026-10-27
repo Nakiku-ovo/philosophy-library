@@ -24,7 +24,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _common import KIND_DIRS, LIB, ROOT, iter_items, out, write_item  # noqa: E402
 
 EXCERPT_LIMIT = 300
-KEEP_DIRS = ["scripts", "config", "index"]
+KEEP_DIRS = ["scripts", "config", "index", "_test"]
 PLACEHOLDER = (
     "_（正文未随包分发。此条只保留书目与定位信息，"
     "请通过合法渠道取得本书后放入 library/01-sources/。）_\n"
