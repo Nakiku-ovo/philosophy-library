@@ -1,0 +1,49 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: py${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.11", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: 语法检查
+        run: python -m compileall -q scripts _test
+
+      - name: 安全属性测试
+        run: python _test/test_pack.py
+
+      - name: 冒烟：空转不崩
+        run: |
+          python scripts/build_index.py
+          python scripts/coverage.py
+          python scripts/scan.py
+          python scripts/order_check.py
+
+      - name: 检索确实带坐标
+        run: |
+          python scripts/query.py 实体 | tee /tmp/q.txt
+          grep -q "〔" /tmp/q.txt || (echo "检索结果没有定位符" && exit 1)
+
+      - name: 排序块内必须无乱序
+        run: |
+          python scripts/order_check.py | tee /tmp/o.txt
+          grep -q "块内乱序 0 处" /tmp/o.txt || (echo "排序出现乱序" && exit 1)
+
+      - name: 分享包不得含非公版正文
+        run: python _test/check_pack_clean.py

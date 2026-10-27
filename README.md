@@ -1,5 +1,7 @@
 # 哲学库 · philosophy-library
 
+[![tests](https://github.com/Nakiku-ovo/philosophy-library/actions/workflows/test.yml/badge.svg)](https://github.com/Nakiku-ovo/philosophy-library/actions/workflows/test.yml)
+
 一个自建的哲学语料库技能：**它不替你想，它告诉你某句话在哪一页。**
 
 ## 它解决什么问题
