@@ -42,12 +42,22 @@ def _scalar(raw: str):
         inner = v[1:-1].strip()
         if not inner:
             return []
-        return [x.strip().strip('"').strip("'") for x in inner.split(",") if x.strip()]
+        # 中文逗号同样是分隔符，否则 [A，B] 会被当成一个词
+        parts = re.split(r"[,，]", inner)
+        return [x.strip().strip('"').strip("'") for x in parts if x.strip()]
     if v.lower() in ("true", "false"):
         return v.lower() == "true"
     if len(v) >= 2 and v[0] == v[-1] and v[0] in "\"'":
         return v[1:-1]
     return v
+
+
+WARNINGS: list[str] = []
+
+
+def warn(msg: str):
+    """收集不致命但会静默改变语义的问题，由调用方决定是否显示。"""
+    WARNINGS.append(msg)
 
 
 def read_item(path: Path):
@@ -61,10 +71,16 @@ def read_item(path: Path):
     for line in parts[1].splitlines():
         if not line.strip() or line.lstrip().startswith("#"):
             continue
-        if ":" not in line:
+        # 中文输入法下冒号默认是全角「：」，把它当分隔符，否则整行会被静默丢弃
+        sep = ":" if ":" in line else ("：" if "：" in line else None)
+        if sep is None:
+            warn(f"{path.name}：无法解析的行「{line.strip()[:30]}」")
             continue
-        key, val = line.split(":", 1)
-        meta[key.strip()] = _scalar(val)
+        key, val = line.split(sep, 1)
+        key = key.strip()
+        if sep == "：" and ":" not in line:
+            warn(f"{path.name}：字段 {key} 用了全角冒号，已按半角处理")
+        meta[key] = _scalar(val)
     return meta, parts[2].lstrip("\n")
 
 

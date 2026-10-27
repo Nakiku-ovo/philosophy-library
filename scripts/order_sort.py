@@ -4,7 +4,9 @@
 用法：
     python scripts/order_sort.py              # 只预览，不动地图
     python scripts/order_sort.py --diff       # 只列出位置变动的行
-    python scripts/order_sort.py --apply      # 写回地图（会先备份）
+    python scripts/order_sort.py --emit 文件   # 生成独立的排序视图
+
+    本脚本不写地图。要把顺序写回本体，用 scripts/apply_order.py --apply。
 
 排序键（严格按序比较，前一级相同才看下一级）：
     1. 时期 period       —— 按 config/order.json 中 periods 的先后
@@ -234,8 +236,12 @@ def main():
 
     out("")
     out(f"合计 {len(rows)} 行；位置相对现状变动 {moved} 处。")
-    if "--apply" not in sys.argv:
-        out("（预览模式，未改动地图。加 --apply 写回）")
+    if "--apply" in sys.argv:
+        out("")
+        out("✗ --apply 不在这个脚本里。本站只负责算顺序与预览，从不写文件。")
+        out("  要把顺序写回地图：python scripts/apply_order.py --apply")
+        sys.exit(2)
+    out("（预览模式，未改动任何文件）")
 
 
 if __name__ == "__main__":

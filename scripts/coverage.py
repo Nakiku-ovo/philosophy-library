@@ -6,8 +6,8 @@
     python scripts/coverage.py --nodes      # 每个地图节点的条目数
     python scripts/coverage.py --next       # 只列出缺得最少的栏（优先补哪栏）
 
-判据只有一条：一个地图码下面挂了几个条目（source / excerpt / judgment 都算）。
-有原文（type: source）才算「可写」；只有判断没有原文的，标「半」。
+判据只有一条：该地图码下的 source 条目里，**有没有真正文**。
+被剥走正文的书目占位仍带 type: source，但它不算材料——按 type 计数会报出一个不存在的「可写」。
 """
 from __future__ import annotations
 
@@ -53,13 +53,33 @@ def load_map():
     return names, buckets
 
 
+PLACEHOLDER_MARK = "正文未随包分发"
+MIN_BODY = 50
+
+
+def has_text(body: str) -> bool:
+    """一条 source 到底有没有正文。
+
+    分享包里被剥掉正文的条目仍然是 type: source，只按 type 计数会把书目占位
+    当成原文，报出一个根本不存在的「可写」。
+    """
+    b = body.strip()
+    if not b or PLACEHOLDER_MARK in b:
+        return False
+    return len(b) >= MIN_BODY
+
+
 def load_coverage():
-    """code -> {'source': n, 'excerpt': n, 'judgment': n, 'theme': n}"""
+    """code -> {'source_text': n, 'source_empty': n, 'excerpt': n, ...}"""
     cov = defaultdict(lambda: defaultdict(int))
-    for _p, meta, _body in iter_items():
+    for _p, meta, body in iter_items():
         code = str(meta.get("map") or "").strip()
-        if re.fullmatch(r"[WC]-\d-\d+", code):
-            cov[code][str(meta.get("type", "?"))] += 1
+        if not re.fullmatch(r"[WC]-\d-\d+", code):
+            continue
+        kind = str(meta.get("type", "?"))
+        if kind == "source":
+            kind = "source_text" if has_text(body) else "source_empty"
+        cov[code][kind] += 1
     return cov
 
 
@@ -78,18 +98,18 @@ def main():
         out("-" * 44)
         for code in sorted(names, key=lambda c: (c[0] != "W", c.split("-")[0], int(c.split("-")[1]), int(c.split("-")[2]))):
             c = cov.get(code, {})
-            mark = "●" if c.get("source") else ("○" if not c else "◐")
-            out(f"{code:<10}{names[code][:12]:<14}{c.get('source',0):>4}{c.get('excerpt',0):>4}"
+            mark = "●" if c.get("source_text") else ("◐" if any(v for k, v in c.items()) else "○")
+            out(f"{code:<10}{names[code][:12]:<14}{c.get('source_text',0):>4}{c.get('excerpt',0):>4}"
                 f"{c.get('judgment',0):>4}{c.get('theme',0):>4}  {mark}")
         empty = [c for c in names if c not in cov]
-        out(f"\n共 {len(names)} 个节点：有原文 {sum(1 for c in names if cov.get(c,{}).get('source'))}，"
-            f"仅摘录/判断 {sum(1 for c in names if cov.get(c) and not cov.get(c,{}).get('source'))}，"
-            f"完全空白 {len(empty)}")
+        n_text = sum(1 for c in names if cov.get(c, {}).get("source_text"))
+        n_shell = sum(1 for c in names if cov.get(c, {}).get("source_empty"))
+        out(f"\n共 {len(names)} 个节点：有正文 {n_text}，只有书目 {n_shell}，完全空白 {len(empty)}")
         return
 
     rows = []
     for name, who, codes in buckets:
-        has_src = [c for c in codes if cov.get(c, {}).get("source")]
+        has_src = [c for c in codes if cov.get(c, {}).get("source_text")]
         has_any = [c for c in codes if cov.get(c)]
         rows.append((name, codes, has_src, has_any))
 
@@ -112,7 +132,7 @@ def main():
 
     writable = [r for r in rows if r[2]]
     out(f"\n13 栏中可开写 {len(writable)} 栏；"
-        f"已有原文的节点 {sum(1 for c in names if cov.get(c,{}).get('source'))}/{len(names)}")
+        f"有正文的节点 {sum(1 for c in names if cov.get(c,{}).get('source_text'))}/{len(names)}")
 
 
 if __name__ == "__main__":

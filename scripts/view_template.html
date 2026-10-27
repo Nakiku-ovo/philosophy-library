@@ -87,7 +87,7 @@ footer{margin-top:64px;padding:24px 0 48px;border-top:1px solid var(--line);font
     <span>__N_NODES__ 个节点</span><i class="dot"></i>
     <span>16 个时期</span><i class="dot"></i>
     <span>__N_LINES__ 条线索</span><i class="dot"></i>
-    <span>__N_INC__ 处倒错已归因</span><i class="dot"></i>
+    <span>__N_INC__ 处旧序冲突已归因</span><i class="dot"></i>
     <span>位置变动 __N_MOVED__ 人</span>
   </div>
 </header>
@@ -101,7 +101,7 @@ footer{margin-top:64px;padding:24px 0 48px;border-top:1px solid var(--line);font
   <div class="metric"><div class="label">已归位</div><div class="big">__N_PEOPLE__</div><div class="note">另有 2 条不是人物，是主题，已移出</div></div>
   <div class="metric"><div class="label">时期</div><div class="big">16</div><div class="note">西方 9 期 / 中国 7 期</div></div>
   <div class="metric"><div class="label">线索</div><div class="big">41</div><div class="note">房间数，师徒住同一间</div></div>
-  <div class="metric"><div class="label">块内倒错</div><div class="big">0</div><div class="note">按新规则重算后，无一处乱序</div></div>
+  <div class="metric"><div class="label">块内乱序</div><div class="big">0</div><div class="note">按新规则重算后，无一处乱序</div></div>
 </div>
 
 <section>
@@ -145,11 +145,11 @@ footer{margin-top:64px;padding:24px 0 48px;border-top:1px solid var(--line);font
 </section>
 
 <section>
-  <h2><span class="n">03</span>__N_INC__ 处倒错，其实是四件不同的事</h2>
+  <h2><span class="n">03</span>旧序与规则冲突 __N_INC__ 处，其实是四件不同的事</h2>
   <p class="sub">只有第一类是真错，改了就是。第二类有理由，但纸上没写理由，所以看起来像乱排。第三类规则本来就该管，只是当时没写。第四类根本不是人。</p>
   <div class="two">
     <div class="chartbox">
-      <div class="chartwrap" style="height:220px"><canvas id="c2" role="img" aria-label="倒错按成因分为四类：真错 11 处、跳层 7 处、特例 3 处、非人 1 处">真错 11、跳层 7、特例 3、非人 1。</canvas></div>
+      <div class="chartwrap" style="height:220px"><canvas id="c2" role="img" aria-label="旧序冲突按成因分为四类：真错 11 处、跳层 7 处、特例 3 处、非人 1 处">真错 11、跳层 7、特例 3、非人 1。</canvas></div>
     </div>
     <div class="warn">
       <h4>最刺眼的一处</h4>
@@ -198,7 +198,7 @@ footer{margin-top:64px;padding:24px 0 48px;border-top:1px solid var(--line);font
     <div class="step">
       <div class="k">改完验</div>
       <h5>查有没有排乱</h5>
-      <p>跑 <code>python scripts/order_check.py</code>，它列出所有倒错并附前后节点。跑到 0 处为止。</p>
+      <p>跑 <code>python scripts/order_check.py</code>，它按线索块逐块检查，列出块内乱序并附前后节点。跑到 0 处为止。</p>
     </div>
   </div>
   <p class="sub" style="margin-top:18px">改完重跑 <code>python scripts/build_view_html.py</code>，这页会按新数据重新生成；顺序视图则跑 <code>order_sort.py --emit</code>。</p>

@@ -17,14 +17,14 @@
 ## 里面有什么
 
 ```
-地图.md            116 个哲学史节点，16 个时期、41 条线索，外加 42 条关系边
-排序规则.md         节点凭什么排在那个位置：时期 → 线索 → 生年
+地图.md 116 个哲学史节点，16 个时期、41 条线索，外加 42 条关系边
+排序规则.md 节点凭什么排在那个位置：时期 → 线索 → 生年
 library/01-sources/ 一手文本，按章切分，PDF 保留纸书页码标记
 library/02-excerpts/ 摘录与划线
 library/03-judgments/ 自己的判断（与原文分开存放，永不混写）
-library/04-themes/  主题连线
-scripts/            14 个脚本，见下表
-config/             排序归属、合法书源
+library/04-themes/ 主题连线
+scripts/ 14 个脚本，见下表
+config/ 排序归属、合法书源
 ```
 
 **四类条目分开存**是这个库的骨架：原文怎么说的、后来谁怎么解释的、你自己怎么判断的——三样东西不许穿同一件衣服。
@@ -35,12 +35,12 @@ config/             排序归属、合法书源
 # 需要 PDF 抽取时才装，其余功能零依赖
 pip install pymupdf
 
-python scripts/probe.py "D:/书/xxx.pdf"    # 先体检：有文字层吗、目录能用吗
-python scripts/extract.py "D:/书/xxx.pdf"  # 按章切分，保留页码
-python scripts/build_index.py              # 建索引
-python scripts/query.py 痛苦 死亡           # 检索，每条带坐标
-python scripts/query.py --trace 我思故我在  # 追最早出处
-python scripts/coverage.py --next          # 我这一栏还缺谁
+python scripts/probe.py "D:/书/xxx.pdf" # 先体检：有文字层吗、目录能用吗
+python scripts/extract.py "D:/书/xxx.pdf" # 按章切分，保留页码
+python scripts/build_index.py # 建索引
+python scripts/query.py 痛苦 死亡 # 检索，每条带坐标
+python scripts/query.py --trace 我思故我在 # 追最早出处
+python scripts/coverage.py --next # 我这一栏还缺谁
 ```
 
 脚本用自身位置定位库，**从任何目录执行都能跑**，不必先 cd。
@@ -75,7 +75,7 @@ python scripts/coverage.py --next          # 我这一栏还缺谁
 包里给的是坐标，取得是你的动作。`resolve.py` 只内置公有领域全文源与馆藏入口：
 
 ```bash
-python scripts/wanted.py --resolve    # 我缺哪些书、去哪合法取得
+python scripts/wanted.py --resolve # 我缺哪些书、去哪合法取得
 ```
 
 Gutenberg / Perseus / ctext / archive.org / Open Library / WorldCat。没有别的。

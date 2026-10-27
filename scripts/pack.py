@@ -73,6 +73,14 @@ def main():
     if "--dest" in sys.argv:
         dest = Path(sys.argv[sys.argv.index("--dest") + 1]).expanduser()
     if dest.exists():
+        if dest.resolve() in (ROOT.resolve(), ROOT.parent.resolve(), Path.home().resolve()):
+            out(f"✗ 拒绝删除：{dest} 是库根目录或家目录。")
+            sys.exit(1)
+        nonempty = any(dest.iterdir())
+        if nonempty and not (dest / "分享包说明.md").exists():
+            out(f"✗ 拒绝删除：{dest} 非空，且不像上一次生成的分享包（缺 分享包说明.md）。")
+            out("  换一个输出目录，或手工确认后自行清空。")
+            sys.exit(1)
         shutil.rmtree(dest)
     dest.mkdir(parents=True)
 
@@ -82,7 +90,8 @@ def main():
             shutil.copytree(src, dest / d)
             for junk in (dest / d).rglob("__pycache__"):
                 shutil.rmtree(junk, ignore_errors=True)
-    for doc in ("SKILL.md", "使用说明.md", "地图.md", "排序规则.md", "选书标准.md"):
+    for doc in ("SKILL.md", "README.md", "使用说明.md", "地图.md", "排序规则.md",
+                "选书标准.md", "LICENSE", "LICENSE-CONTENT", "地图-罗素序.md"):
         if (ROOT / doc).exists():
             shutil.copy2(ROOT / doc, dest / doc)
 

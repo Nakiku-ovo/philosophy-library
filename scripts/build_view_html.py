@@ -205,7 +205,7 @@ def main():
     OUT.write_text(html, encoding="utf-8")
     print(f"已生成 {OUT.name}")
     print(f"  {data['nPeople']} 人 / {data['nPeriods']} 时期 / {data['nLines']} 线索 / "
-          f"倒错 {data['nInc']} 处 / 位置变动 {data['nMoved']} 人")
+          f"旧序冲突 {data['nInc']} 处 / 位置变动 {data['nMoved']} 人")
     print(f"  分类：{data['kinds']}")
 
 

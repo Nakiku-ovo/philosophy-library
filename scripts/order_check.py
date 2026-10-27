@@ -136,6 +136,8 @@ def main():
     problems = 0
 
     out(f"地图节点共 {total} 个，分 {len(secs)} 个分区。\n")
+    out("说明：本脚本量的是一条线索块内部的先后，不是「相对原始章节序挪了多少」。\n"
+        "后者由 build_view_html.py 报告，叫「旧序冲突」，两个数字不同是正常的。\n")
     out("判据：同一线索块内，按行的先后，起始年应单调不减；相等时按结束年。\n"
         "块与块之间只按线索锚点排序，允许回跳——那是换房间，不是排错。\n")
 
@@ -169,7 +171,7 @@ def main():
             prev, prev_row = y, row
         out("")
 
-    out(f"合计时间倒错 {problems} 处。")
+    out(f"合计块内乱序 {problems} 处。")
 
 
 if __name__ == "__main__":
